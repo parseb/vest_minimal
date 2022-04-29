@@ -14,10 +14,14 @@ contract Vestoor is ReentrancyGuard {
 
     error VestingInProgress(address, address);
 
-
+    /// @notice constructor sets immutable constant
+    /// @param _k constant for vesting time and ammount encoding in 1 uint256
     constructor(uint256 _k) public {
         k = _k;
     }
+
+
+    /// @notice set vesting agreement
     function setVest(address _token, 
                     address _beneficiary, 
                     uint256 _amount, 
@@ -32,6 +36,7 @@ contract Vestoor is ReentrancyGuard {
         require(_beneficiary != address(0), "Beneficiary is 0");
         require(_enddate > block.timestamp, "Present given. Requires Future.");
         require(_amount > _enddate, "Amount must be greater than enddate");
+        require(_amount < k, "Max amount is k-1");
 
         vestings[_token][_beneficiary] = _amount * k + _enddate;
 
