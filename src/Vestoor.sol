@@ -29,7 +29,7 @@ contract Vestoor is ReentrancyGuard {
     function setVest(address _token, 
                     address _beneficiary, 
                     uint256 _amount, 
-                    uint256 _enddate) 
+                    uint256 _enddate) // days from now
                     external 
                     returns (bool s) {
 
@@ -42,7 +42,7 @@ contract Vestoor is ReentrancyGuard {
         require(_amount > _enddate, "Amount must be greater than enddate");
         require(_amount < k, "Max amount is k-1");
 
-        vestings[_token][_beneficiary] = _amount * k + ( _enddate * days + block.timestamp );
+        vestings[_token][_beneficiary] = _amount * k + ( _enddate * 1 days + block.timestamp );
 
         s = IERC20(_token).transferFrom(msg.sender, address(this), _amount);
 
@@ -52,7 +52,7 @@ contract Vestoor is ReentrancyGuard {
 
 
 
-    function approveMyBag(address _token) public nonReentrant returns (bool s) {
+    function withdrawAvailable(address _token) public nonReentrant returns (bool s) {
         uint256 iv= vestings[_token][msg.sender];
         require(vestings[_token][msg.sender] != 0, "Nothing to bag");
 
@@ -65,7 +65,7 @@ contract Vestoor is ReentrancyGuard {
 
         } else {
             uint256 eligibleAmount = (iv / k) - ( ((iv / k) / (iv % k)) * ( (iv % k) - block.timestamp ) );
-            vestings[_token][msg.sender] = (iv / k - eligibleAmount) * k + ((iv % k);
+            vestings[_token][msg.sender] = (iv / k - eligibleAmount) * k + (iv % k);
 
             s = IERC20(_token).transfer(msg.sender, eligibleAmount);
             require(s, "Transfer failed");

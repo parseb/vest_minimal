@@ -24,10 +24,10 @@ contract VestoorTest is DSTestPlus {
     }
 
     function testSetVest(uint32 _ammount) public {
-        uint256 endD = block.timestamp + 20000;
+        uint256 endD = 22;
         uint256 ammount = uint256(_ammount) + endD + 1;
         V.setVest(eAddr, address(1), ammount, endD);
-        bool s = V.getVest(eAddr, address(1)) == (ammount* k) + endD;
+        bool s = V.getVest(eAddr, address(1)) == (ammount* k) + ( endD * 1 days) ;
         assertTrue(s);
     }
 }
