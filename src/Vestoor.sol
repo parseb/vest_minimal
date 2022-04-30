@@ -13,7 +13,7 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 contract Vestoor is ReentrancyGuard {
 
     /// @notice storage and getter for vesting agreements
-    mapping (address => mapping(address => uint256)) public vestings;
+    mapping (address => mapping(address => uint256)) vestings;
     uint256 immutable k; //19
     uint256 immutable oneToken; //1e18
 
@@ -25,13 +25,17 @@ contract Vestoor is ReentrancyGuard {
 
     /// @notice constructor sets immutable constant
     /// @param _k constant for vesting time and ammount encoding in 1 uint256
-    constructor(uint256 _k) public {
+    constructor(uint256 _k) {
         k = _k;
         oneToken = 1e18;
     }
 
 
-    /// @notice set vesting agreement
+    /// @notice create vesting agreement
+    /// @param _token ERC20 token contract address to be vested
+    /// @param _beneficiary beneficiary of the vesting agreement
+    /// @param _amount amount of tokens to be vested for over period
+    /// @param _days durration of vestion period in days
     function setVest(address _token, 
                     address _beneficiary, 
                     uint256 _amount, 
@@ -56,8 +60,9 @@ contract Vestoor is ReentrancyGuard {
     }
 
 
-
-    function withdrawAvailable(address _token) public nonReentrant returns (bool s) {
+    /// @notice withdraws all tokens that have vested for given ERC20 contract address and msg.sender
+    /// @param _token ERC20 contract of token to be withdrawn
+    function withdrawAvailable(address _token) external nonReentrant returns (bool s) {
         uint256 iv= vestings[_token][msg.sender];
         require(vestings[_token][msg.sender] != 0, "Nothing to bag");
 
@@ -78,18 +83,13 @@ contract Vestoor is ReentrancyGuard {
             require(s, "Transfer failed");
 
             emit WithdrewFromVest(_token, msg.sender, eligibleAmount);
-
         }
-
-        
-        
-        
-
     }
 
-
+    /// @notice retrieves vesting data for a given token-beneficiary pair
+    /// @param _token ERC20 token contract
+    /// @param _beneficiary beneficiary of the vesting agreement
     function getVest(address _token, address _beneficiary) external view returns (uint256) {
         return vestings[_token][_beneficiary];
     }
 }
-
