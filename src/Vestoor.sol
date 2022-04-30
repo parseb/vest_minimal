@@ -14,6 +14,10 @@ contract Vestoor is ReentrancyGuard {
 
     error VestingInProgress(address, address);
 
+    event NewVesting(address indexed token, address indexed beneficiary, uint256 amt, uint256 bywhen);
+    event VestingCompleted(address indexed token, address indexed beneficiary, uint256 amt);
+    event WithdrewFromVest(address indexed token, address indexed beneficiary, uint256 partialAmt);
+
     /// @notice constructor sets immutable constant
     /// @param _k constant for vesting time and ammount encoding in 1 uint256
     constructor(uint256 _k) public {
@@ -38,9 +42,11 @@ contract Vestoor is ReentrancyGuard {
         require(_amount > _enddate, "Amount must be greater than enddate");
         require(_amount < k, "Max amount is k-1");
 
-        vestings[_token][_beneficiary] = _amount * k + _enddate;
+        vestings[_token][_beneficiary] = _amount * k + ( _enddate * days + block.timestamp );
 
         s = IERC20(_token).transferFrom(msg.sender, address(this), _amount);
+
+        emit NewVesting(_token, _beneficiary, _amount, _enddate);
         return s;
     }
 
@@ -50,15 +56,19 @@ contract Vestoor is ReentrancyGuard {
         uint256 iv= vestings[_token][msg.sender];
         require(vestings[_token][msg.sender] != 0, "Nothing to bag");
 
-        if (iv % k < block.timestamp) {
-            s = IERC20(_token).approve(msg.sender, iv/k);
-            require(s, "Approve failed");
+        if (iv % k > block.timestamp) {
+            s = IERC20(_token).transfer(msg.sender, iv/k);
+            require(s, "Transfer failed");
             vestings[_token][msg.sender] = 0;
+
+            emit VestingCompleted(_token, msg.sender, iv/k);
+
         } else {
-            uint256 eligibleAmount = (block.timestamp - (iv % k) ) * k / (iv / k);
-            s = IERC20(_token).approve(msg.sender, eligibleAmount);
-            require(s, "Approve failed");
-            vestings[_token][msg.sender] = (iv / k - eligibleAmount) * k + (iv % k);
+            uint256 eligibleAmount = (iv / k) - ( ((iv / k) / (iv % k)) * ( (iv % k) - block.timestamp ) );
+            vestings[_token][msg.sender] = (iv / k - eligibleAmount) * k + ((iv % k);
+
+            s = IERC20(_token).transfer(msg.sender, eligibleAmount);
+            require(s, "Transfer failed");
         }
 
         
