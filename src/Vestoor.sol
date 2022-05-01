@@ -39,7 +39,7 @@ contract Vestoor is ReentrancyGuard {
     function setVest(address _token, 
                     address _beneficiary, 
                     uint256 _amount, 
-                    uint256 _days) // days from now
+                    uint256 _days) 
                     external 
                     returns (bool s) {
 
