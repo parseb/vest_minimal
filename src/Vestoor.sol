@@ -13,7 +13,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 contract Vestoor {
 
     /// @notice storage and getter for vesting agreements
-    mapping (address => mapping(address => uint256)) vestings;
+    mapping(address => mapping(address => uint256)) vestings;
     uint256 immutable k; //19
     uint256 immutable oneToken; //1e18
 
