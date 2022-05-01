@@ -1,5 +1,6 @@
 ## defaults for _all_ profiles
 [default]
+gas_reports = ["Vestoor"]
 src = 'src'
 test = 'test'
 out = 'out'

@@ -13,6 +13,8 @@ ________
 ## Getting Started
 Clone, then forge install.
 
+Update and rename .env.example or add the listed variables to global session. First time using foundry and this template. You get the point.
+
 ``` forge install ``` <br>
 ``` forge test ```
 

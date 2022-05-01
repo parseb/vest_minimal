@@ -2,7 +2,7 @@
 pragma solidity 0.8.11;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+
 // import "./test/utils/Console2.sol";
 /// @title Vestoor
 /// @author parseb | @parseb | petra306@protonmail.com
@@ -10,7 +10,7 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 /// @dev As expected. Experimental
 /// @custom:security contact: petra306@protonmail.com
 
-contract Vestoor is ReentrancyGuard {
+contract Vestoor {
 
     /// @notice storage and getter for vesting agreements
     mapping (address => mapping(address => uint256)) vestings;
@@ -62,22 +62,21 @@ contract Vestoor is ReentrancyGuard {
 
     /// @notice withdraws all tokens that have vested for given ERC20 contract address and msg.sender
     /// @param _token ERC20 contract of token to be withdrawn
-    function withdrawAvailable(address _token) external nonReentrant returns (bool s) {
+    function withdrawAvailable(address _token) external returns (bool s) {
         uint256 iv= vestings[_token][msg.sender];
         require(vestings[_token][msg.sender] != 0, "Nothing to bag");
 
         if (iv % k < block.timestamp) {
+            vestings[_token][msg.sender] = 0;
             s = IERC20(_token).transfer(msg.sender, (iv/k) * oneToken);
             require(s, "Transfer failed");
-            vestings[_token][msg.sender] = 0;
 
             emit VestingCompleted(_token, msg.sender, iv/k);
 
         } else {
+            require(!s);
             uint256 eligibleAmount = (iv / k) - ( ((iv / k) / (iv % k)) * ( (iv % k) - block.timestamp ) );
             vestings[_token][msg.sender] = (iv / k - eligibleAmount) * k + ((iv % k) - ((iv % k) - block.timestamp) );
-
-
 
             s = IERC20(_token).transfer(msg.sender, eligibleAmount * oneToken);
             require(s, "Transfer failed");

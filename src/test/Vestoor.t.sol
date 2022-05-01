@@ -5,7 +5,6 @@ import {DSTestPlus} from "./utils/DSTestPlus.sol";
 import {Vestoor} from "../Vestoor.sol";
 import {MockERC20} from "./utils/MockERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-//import {console2} from "./utils/Console2.sol";
 
 contract VestoorTest is DSTestPlus {
     Vestoor V;
@@ -79,7 +78,7 @@ contract VestoorTest is DSTestPlus {
         assertTrue(V.withdrawAvailable(eAddr));
         assertTrue(V.getVest(eAddr, _who_) == 0 );
 
-        /// @todo think edge hasvest -> 0 -> creates vest sme block
+        /// @todo granularity and same block 
 
     }
     
