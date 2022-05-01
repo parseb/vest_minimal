@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 // import "./test/utils/Console2.sol";
 /// @title Vestoor
 /// @author parseb | @parseb | petra306@protonmail.com
-/// @notice Minimalist vesting contract exercise
+/// @notice Minimalist vesting contract study
 /// @dev As expected. Experimental
 /// @custom:security contact: petra306@protonmail.com
 
