@@ -75,10 +75,11 @@ contract Vestoor {
 
         } else {
             require(!s);
+            s= true;
             uint256 eligibleAmount = (iv / k) - ( ((iv / k) / (iv % k)) * ( (iv % k) - block.timestamp ) );
             vestings[_token][msg.sender] = (iv / k - eligibleAmount) * k + ((iv % k) - ((iv % k) - block.timestamp) );
 
-            s = IERC20(_token).transfer(msg.sender, eligibleAmount * oneToken);
+            s = s&& IERC20(_token).transfer(msg.sender, eligibleAmount * oneToken);
             require(s, "Transfer failed");
 
             emit WithdrewFromVest(_token, msg.sender, eligibleAmount);
