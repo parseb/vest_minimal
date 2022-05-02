@@ -15,7 +15,7 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 contract MiniVest is ReentrancyGuard {
 
     /// @notice storage of vesting agreements  [token][beneficiary] = vesting
-    mapping(address => mapping(address => uint256)) vestings;
+    mapping(address => mapping(address => uint256[])) public vestings;
 
     uint256 immutable k; //19
     uint256 immutable oneToken; //1e18
@@ -45,7 +45,7 @@ contract MiniVest is ReentrancyGuard {
                     external 
                     returns (bool s) {
 
-        if (vestings[_token][_beneficiary] != 0) revert VestingInProgress(_token, _beneficiary);
+        if (vestings[_token][_beneficiary].length != 0) revert VestingInProgress(_token, _beneficiary);
         require(IERC20(_token).balanceOf(msg.sender) >= _amount * oneToken, "Insufficient funds");
 
         require(_amount * _days > 1, "Amount must be greater than 0");
@@ -53,7 +53,7 @@ contract MiniVest is ReentrancyGuard {
         require(_amount > _days, "Amount must be greater than days");
         require(_amount < k, "Max amount is k-1");
 
-        vestings[_token][_beneficiary] = _amount * k + ( _days * 1 days + block.timestamp );
+        vestings[_token][_beneficiary].push( _amount * k + ( _days * 1 days + block.timestamp ));
 
         s = IERC20(_token).transferFrom(msg.sender, address(this), _amount * oneToken);
 
@@ -66,11 +66,11 @@ contract MiniVest is ReentrancyGuard {
     /// @notice withdraws all tokens that have vested for given ERC20 contract address and msg.sender
     /// @param _token ERC20 contract of token to be withdrawn
     function withdrawAvailable(address _token) external nonReentrant returns (bool s) {
-        uint256 iv= vestings[_token][msg.sender];
-        require(vestings[_token][msg.sender] != 0, "Nothing to bag");
+        require(vestings[_token][msg.sender].length > 0, "Nothing to bag");
+        uint256 iv= vestings[_token][msg.sender][vestings[_token][msg.sender].length - 1];
 
         if (iv % k < block.timestamp) {
-            vestings[_token][msg.sender] = 0;
+            delete vestings[_token][msg.sender];
             s = IERC20(_token).transfer(msg.sender, (iv/k) * oneToken);
             require(s, "Transfer failed");
 
@@ -79,7 +79,7 @@ contract MiniVest is ReentrancyGuard {
         } else {
 
             uint256 eligibleAmount = (iv / k) - ( ((iv / k) / (iv % k)) * ( (iv % k) - block.timestamp ) );
-            vestings[_token][msg.sender] = (iv / k - eligibleAmount) * k + ((iv % k) - ((iv % k) - block.timestamp) );
+            vestings[_token][msg.sender].push((iv / k - eligibleAmount) * k + ((iv % k) - ((iv % k) - block.timestamp) ));
 
             s = IERC20(_token).transfer(msg.sender, eligibleAmount * oneToken);
             require(s, "Transfer failed");
@@ -91,7 +91,7 @@ contract MiniVest is ReentrancyGuard {
     /// @notice retrieves vesting data for a given token-beneficiary pair
     /// @param _token ERC20 token contract
     /// @param _beneficiary beneficiary of the vesting agreement
-    function getVest(address _token, address _beneficiary) external view returns (uint256) {
-        return vestings[_token][_beneficiary];
+    function getVest(address _token, address _beneficiary) external view returns ( uint256  ) {
+        return vestings[_token][_beneficiary][vestings[_token][_beneficiary].length - 1] ;
     }
 }
