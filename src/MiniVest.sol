@@ -4,6 +4,7 @@ pragma solidity 0.8.11;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
+
 // import "./test/utils/Console2.sol";
 /// @title MiniVest
 /// @author parseb | @parseb | petra306@protonmail.com
@@ -13,8 +14,9 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 contract MiniVest is ReentrancyGuard {
 
-    /// @notice storage and getter for vesting agreements
+    /// @notice storage of vesting agreements  [token][beneficiary] = vesting
     mapping(address => mapping(address => uint256)) vestings;
+
     uint256 immutable k; //19
     uint256 immutable oneToken; //1e18
 
@@ -54,6 +56,7 @@ contract MiniVest is ReentrancyGuard {
         vestings[_token][_beneficiary] = _amount * k + ( _days * 1 days + block.timestamp );
 
         s = IERC20(_token).transferFrom(msg.sender, address(this), _amount * oneToken);
+
 
         emit NewVesting(_token, _beneficiary, _amount, _days);
         return s;
