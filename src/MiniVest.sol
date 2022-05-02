@@ -2,6 +2,7 @@
 pragma solidity 0.8.11;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 // import "./test/utils/Console2.sol";
 /// @title MiniVest
@@ -10,7 +11,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 /// @dev As expected. Experimental
 /// @custom:security contact: petra306@protonmail.com
 
-contract MiniVest {
+contract MiniVest is ReentrancyGuard {
 
     /// @notice storage and getter for vesting agreements
     mapping(address => mapping(address => uint256)) vestings;
@@ -29,7 +30,6 @@ contract MiniVest {
         k = _k;
         oneToken = 1e18;
     }
-
 
     /// @notice create vesting agreement
     /// @param _token ERC20 token contract address to be vested
@@ -62,7 +62,7 @@ contract MiniVest {
 
     /// @notice withdraws all tokens that have vested for given ERC20 contract address and msg.sender
     /// @param _token ERC20 contract of token to be withdrawn
-    function withdrawAvailable(address _token) external returns (bool s) {
+    function withdrawAvailable(address _token) external nonReentrant returns (bool s) {
         uint256 iv= vestings[_token][msg.sender];
         require(vestings[_token][msg.sender] != 0, "Nothing to bag");
 
