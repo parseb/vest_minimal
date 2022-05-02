@@ -4,13 +4,13 @@ pragma solidity 0.8.11;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 // import "./test/utils/Console2.sol";
-/// @title Vestoor
+/// @title MiniVest
 /// @author parseb | @parseb | petra306@protonmail.com
 /// @notice Minimalist vesting contract study
 /// @dev As expected. Experimental
 /// @custom:security contact: petra306@protonmail.com
 
-contract Vestoor {
+contract MiniVest {
 
     /// @notice storage and getter for vesting agreements
     mapping(address => mapping(address => uint256)) vestings;
