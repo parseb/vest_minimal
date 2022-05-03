@@ -1,6 +1,6 @@
 # Minimal Vesting Contract
 
-### Vestoor.sol is a minimalistic, token agnostic and low footprint contract that provides immutable ERC20 token vesting functionality.  
+### MiniVest.sol is a minimalistic, token agnostic and low footprint contract that provides immutable ERC20 token vesting functionality.  
 
 ________
 
