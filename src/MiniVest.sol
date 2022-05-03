@@ -5,7 +5,6 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 
-// import "./test/utils/Console2.sol";
 /// @title MiniVest
 /// @author parseb | @parseb | petra306@protonmail.com
 /// @notice Minimalist vesting contract study
@@ -15,6 +14,7 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 contract MiniVest is ReentrancyGuard {
 
     /// @notice storage of vesting agreements  [token][beneficiary] = vesting
+    /// @dev getter function  
     mapping(address => mapping(address => uint256[])) public vestings;
 
     uint256 immutable k; //19
@@ -90,7 +90,7 @@ contract MiniVest is ReentrancyGuard {
 
     /// @notice retrieves vesting data for a given token-beneficiary pair
     /// @param _token ERC20 token contract
-    /// @param _beneficiary beneficiary of the vesting agreement
+    /// @param _beneficiary beneficiary of the vesting agreement 
     function getVest(address _token, address _beneficiary) external view returns ( uint256  ) {
         return vestings[_token][_beneficiary][vestings[_token][_beneficiary].length - 1] ;
     }
