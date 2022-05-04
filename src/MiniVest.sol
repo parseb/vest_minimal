@@ -51,7 +51,6 @@ contract MiniVest is ReentrancyGuard {
 
         require(_amount * _days > 1, "Amount must be greater than 0");
         require(_beneficiary != address(0), "Beneficiary is 0");
-        require(_amount > _days, "Amount must be greater than days");
         require(_amount < k, "Max amount is k-1");
 
         vestings[_token][_beneficiary] = _amount * k + ( _days * 1 days + block.timestamp );
