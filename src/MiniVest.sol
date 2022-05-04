@@ -42,7 +42,7 @@ contract MiniVest is ReentrancyGuard {
                     address _beneficiary, 
                     uint256 _amount, 
                     uint256 _days) 
-                    external 
+                    public 
                     returns (bool s) {
 
         if (vestings[_token][_beneficiary] != 0) revert VestingInProgress(_token, _beneficiary);
