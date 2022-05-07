@@ -42,8 +42,7 @@ contract MiniVest is ReentrancyGuard {
                     address _beneficiary, 
                     uint256 _amount, 
                     uint256 _days) 
-                    public 
-                    virtual
+                    internal virtual
                     returns (bool s) {
 
         if (vestings[_token][_beneficiary] != 0) revert VestingInProgress(_token, _beneficiary);
@@ -65,7 +64,7 @@ contract MiniVest is ReentrancyGuard {
 
     /// @notice withdraws all tokens that have vested for given ERC20 contract address and msg.sender
     /// @param _token ERC20 contract of token to be withdrawn
-    function withdrawAvailable(address _token) public nonReentrant returns (bool s) {
+    function withdrawAvailable(address _token) internal virtual nonReentrant returns (bool s) {
         uint256 iv= vestings[_token][msg.sender];
         require(vestings[_token][msg.sender] != 0, "Nothing to bag");
 
