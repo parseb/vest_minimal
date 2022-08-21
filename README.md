@@ -22,7 +22,7 @@ Storing, retrieving and updating vesting data is done through <br>`vestings[vest
 
 #### Formula
 
-[token][beleficiary] = amountOfTokens (amount < k) * k (constant) + endTime (seconds unix epoch [days_arg * 1 days + block.timestamp])
+[token][beneficiary] = amountOfTokens (amount < k) * k (constant) + endTime (seconds unix epoch [days_arg * 1 days + block.timestamp])
 
 #### Limitations
 
