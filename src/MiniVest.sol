@@ -15,7 +15,7 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 contract MiniVest is ReentrancyGuard {
 
     /// @notice storage of vesting agreements  [token][beneficiary] = vesting
-    mapping(address => mapping(address => uint256)) vestings;
+   //  mapping(address => mapping(address => uint256)) vestings; @dev do not use.
 
     uint256 immutable k; //19
     uint256 immutable oneToken; //1e18
